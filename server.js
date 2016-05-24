@@ -6,8 +6,7 @@ var app           = express();          //=> define app and connecting it to exp
 var bodyParser    = require('body-parser');  //=>help POST content from my HTTP request calls
 
 //connect to database
-var mongoose = require('mongoose'); //=> connecting mongoose module to variable to create the database
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); //=> connects to the database
+
 //unicornapi-63614.onmodulus.net
 
 //establish the Unicorn model in server
@@ -44,26 +43,30 @@ router.route('/unicorns')
 
   //create a unicorn
   .post(function(req, res){
+    console.log("Print");
     var unicorn = new Unicorn(); //=>creates an instance of the Unicorn model
     unicorn.name = req.body.name; //=>sets the name of the unicorn in a requests
+    console.log(unicorn);
 
     //save the new instance of a unicorn and validates for no errors
     unicorn.save(function (err) {
-      if(err)
+      console.log("Something");
+      if(err){
         res.send(err); //=> Notifies the error if unicorn was not added saved all through the log
-
+      }else {
         res.json({message: "Your new unicorn has been created!"}); //=> Notifies the success if the unicorn was saved.
-
+      }
     });
-  }); //=> ERRORR Postman is throwing an error saying that it cannot get unicorns.......
+  }) //=> ERRORR Postman is throwing an error saying that it cannot get unicorns.......
 
   //get all unicorns
   .get(function(req, res){
     Unicorn.find(function(err, unicorns){ //=> takes two parameters
-      if (err)
+      if (err){
         res.send(err);
-
+      } else{
       res.json(unicorns);
+      }
 
     });
   });
@@ -74,38 +77,45 @@ router.route('/unicorns/:unicorn_id')
   //=> get a specific unicorn with the id as the parameter being passed
   .get(function(req,res){
     Unicorn.findById(req.params.unicorn_id, function(err, unicorn){ //=> pass the id of unicron as the params along with a CB function on Error/Success
-      if (err)
+      if (err){
         res.send(err);
+      } else {
         res.json(unicorn);
+      }
     });
-  });
+  })
 
   //=> to update a specific unicorn
   .put(function(req,res){
     Unicorn.findById(req.params.unicorn_id, function(err, unicorn){
-      if (err)
-        res.send(err);
+      if (err){
+        res.send(err);}
+        else{
 
       unicorn.name = req.body.name; //=>updates unicorns name
+    }
 
       //save the new unicorn information
       unicorn.save(function(err) {
-        if(err)
+        if(err){
           res.send(err);
+        } else {
         res.json({message: "Unicorn has been updated"});
+      }
       });
     });
-  });
+  })
 
   //=> to delete a specific unicorn
   .delete(function(req, res){
     Unicorn.remove({
       _id: req.params.unicorn_id
     }, function(err, unicorn){
-      if(err)
+      if(err){
         res.send(err);
-
+      }else {
       res.json({message: "Unicorn has been deleted"});
+    }
     });
   });
 
